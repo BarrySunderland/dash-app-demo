@@ -200,5 +200,4 @@ df = load_and_prep_data()
 if __name__ == '__main__':
     
 #     port = int(os.environ.get("PORT", 80))
-    app.run_server(debug=debug)
-    
+    server = app.server

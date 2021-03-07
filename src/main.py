@@ -1,16 +1,15 @@
 import pandas as pd
-import plotly.express as px
 import datetime as dt
+import os
 
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
-
-
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 
+debug=False
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -198,6 +197,6 @@ df = load_and_prep_data()
 
 if __name__ == '__main__':
     
-    
-    app.run_server(debug=debug, port=9999)
+    port = int(os.environ.get("PORT", 8050))
+    app.run_server(debug=debug, port=port)
     

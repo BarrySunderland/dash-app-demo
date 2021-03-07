@@ -1,1 +1,1 @@
-web: python3 ./src/main.py
+web: gunicorn main:app.server -b :46550

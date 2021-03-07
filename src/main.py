@@ -73,6 +73,8 @@ def prep_datetime(df):
 #load data
 def load_and_prep_data():
     fpath = '../data/raw/output.csv'
+    print(os.getcwd())
+    print(os.listdir('..'))
     df = pd.read_csv(fpath)
     df = prep_datetime(df)
 

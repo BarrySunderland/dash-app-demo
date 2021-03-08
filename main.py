@@ -8,11 +8,13 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
+import flask
 
 debug=False
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+server = flask.Flask(__name__) # define flask app.server
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets, server=server)
 
 label_dict = {"p":"real power",
               "q":"imaginary power",
@@ -196,9 +198,5 @@ def update_graph(type_selection, outlier_radio):
 # main()
 df = load_and_prep_data()
 
-server = app.server
-
 if __name__ == '__main__':
-    
-#     port = int(os.environ.get("PORT", 80))
-    app.run_server()
+    app.run_server(debug=True)

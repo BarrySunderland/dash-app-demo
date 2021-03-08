@@ -13,8 +13,8 @@ import flask
 debug=False
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css','./assets/custom.css' ]
 
-
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+server = flask.Flask(__name__)
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets, server=server)
 server = app.server
 
 label_dict = {"p":"real power",

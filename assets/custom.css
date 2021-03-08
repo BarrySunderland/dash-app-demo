@@ -1,0 +1,12 @@
+body {
+    margin:0px;
+    font-family: sans-serif;
+}
+
+.plot-layout {
+    margin:8px;
+}
+
+.blue-fill {
+    background-color: "#005499";
+}

@@ -11,18 +11,17 @@ from dash.dependencies import Input, Output
 import flask
 
 debug=False
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css','./assets/custom.css' ]
 
-server = flask.Flask(__name__) # define flask app.server
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets, server=server)
+
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+server = app.server
 
 label_dict = {"p":"real power",
               "q":"imaginary power",
               "i":"current",
               "v":"voltage"}
 
-header = html.H1("Three Phase Sensor Monitor", 
-                 style={'text-align': 'center'})
 dropdown = dcc.Dropdown(id="type_selector",
              options=[{"label":v, 
                        "value":k} for k,v in label_dict.items()],
@@ -51,15 +50,33 @@ selectors = html.Div([dropdown,
 graph = dcc.Graph(id='value_plots', figure={})
 
 
-selectors_graph = html.Div([selectors,
-                            html.Div([
+selectors_graph = html.Div(className="row plot-layout", children=[selectors,
+                            html.Div(className="eight columns", children=[
                                 graph
-                            ], className="eight columns"),
-    ], className="row")
+                            ]),
+    ])
 
-app.layout = html.Div([header, 
-                       selectors_graph
-                      ])
+app.layout = html.Div(
+    children=[html.A(href="https://clemap.com", children=[
+    html.Div(className="row",
+        style={
+            "background-color": "#005499"
+        },
+        children=[
+            html.Div(className="one columns", 
+                children=[
+                html.Img(src="https://images.squarespace-cdn.com/content/5c2bc35bcef3729843c7e70c/1570518147439-332SOX2GQ5N1EQYPVV8I/clemap_logo_stnd_clr%2Bwhite.png?format=1500w&content-type=image%2Fpng",
+                    style={'max-height':'50px'}
+                ),
+            ]),
+        ])
+    ]),
+    html.H3("Three Phase Sensor", 
+        style={'text-align': 'center'}
+    ),
+    selectors_graph,
+])
+
 
 def prep_datetime(df):
     """
@@ -74,7 +91,7 @@ def prep_datetime(df):
 
 #load data
 def load_and_prep_data():
-    fpath = '/app/data/raw/output.csv'
+    fpath = './data/raw/output.csv'
     print(os.getcwd())
     print(os.listdir('.'))
     df = pd.read_csv(fpath)

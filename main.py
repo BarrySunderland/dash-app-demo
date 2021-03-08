@@ -196,8 +196,9 @@ def update_graph(type_selection, outlier_radio):
 # main()
 df = load_and_prep_data()
 
+server = app.server
 
 if __name__ == '__main__':
     
 #     port = int(os.environ.get("PORT", 80))
-    server = app.server
+    app.run_server()

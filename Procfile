@@ -1,3 +1,1 @@
-web: pwd
-web: ls
-web: gunicorn main:app.server
+web: gunicorn main:server

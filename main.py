@@ -8,13 +8,12 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
-import flask
 
 debug=False
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css','./assets/custom.css' ]
 
-server = flask.Flask(__name__)
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets, server=server)
+
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
 label_dict = {"p":"real power",

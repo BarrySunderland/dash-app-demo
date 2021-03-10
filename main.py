@@ -9,9 +9,8 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 
-debug=False
+debug = False
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css','./assets/custom.css' ]
-
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
@@ -21,9 +20,10 @@ label_dict = {"p":"real power",
               "i":"current",
               "v":"voltage"}
 
+# dash components
+dropdown_options = [{"label":v, "value":k} for k,v in label_dict.items()]
 dropdown = dcc.Dropdown(id="type_selector",
-             options=[{"label":v, 
-                       "value":k} for k,v in label_dict.items()],
+             options=dropdown_options,
              multi=True,
              value=list(label_dict.keys()),
              style={}
@@ -48,13 +48,15 @@ selectors = html.Div([dropdown,
 
 graph = dcc.Graph(id='value_plots', figure={})
 
-
-selectors_graph = html.Div(className="row plot-layout", children=[selectors,
-                            html.Div(className="eight columns", children=[
-                                graph
-                            ]),
+selectors_graph = html.Div(className="row plot-layout", 
+    children=[selectors,
+        html.Div(className="eight columns", 
+        children=[
+            graph
+        ]),
     ])
 
+# dash layout
 app.layout = html.Div(
     children=[html.A(href="https://clemap.com", children=[
     html.Div(className="row",
@@ -88,18 +90,19 @@ def prep_datetime(df):
     df = df.drop(columns=['day','time'])
     return df
 
-#load data
+
 def load_and_prep_data():
+    """"
+    load data from the csv and create the dateime column
+    """
     fpath = './data/raw/output.csv'
-    print(os.getcwd())
-    print(os.listdir('.'))
     df = pd.read_csv(fpath)
     df = prep_datetime(df)
 
     return df
 
 def filter_df_cols(df, type_selection=['p','q','i','v']):
-    
+
     selected_cols = []
     for col in df.columns:
         if col[-1] in type_selection:
@@ -110,7 +113,7 @@ def filter_df_cols(df, type_selection=['p','q','i','v']):
 
 def filter_outliers_from_series(ser):
     """
-    remove values that are more or less 
+    remove values that are >= or <=  
     than 3 times the standard deviation from the mean.
     ser: pd.Series with numerical dytpe
     returns: filtered pd.Series
@@ -125,7 +128,11 @@ def filter_outliers_from_series(ser):
 
 
 def make_figure(df, type_selection, filter_outliers=False):
-    
+    """
+    make the plotly figure than can be filtered by type of 
+    data selected, and filter/include outliers
+
+    """
     val_cols = df.columns.tolist()
     label_dict = {"p":"real power",
                   "q":"imaginary power",
@@ -177,6 +184,11 @@ def make_figure(df, type_selection, filter_outliers=False):
     fig.update_layout(height=(200*(i+1)), width=600)
     
     return fig
+
+## Load Data and create app callback
+
+DF = load_and_prep_data()
+
 # Connect the Plotly graphs with Dash Components
 # accepts (list_of_Output_objects,list_of_Input_objects)
 # list_of_output_objects matches objects returned by the function
@@ -201,18 +213,14 @@ def update_graph(type_selection, outlier_radio):
     
     
     outlier_radio_bool = False if outlier_radio=='include' else True
-    tdf = filter_df_cols(df, type_selection=type_selection)
+    tdf = filter_df_cols(DF, type_selection=type_selection)
     
     fig = make_figure(tdf, 
                       type_selection=type_selection,
-                      filter_outliers=outlier_radio_bool)
-#     fig = make_figure(df)
-    
-    return fig,
+                      filter_outliers=outlier_radio_bool)    
+    return fig, # must return a tuple
 
 
-# main()
-df = load_and_prep_data()
 
 if __name__ == '__main__':
     app.run_server(debug=True)
